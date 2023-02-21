@@ -36,6 +36,12 @@ void median_blur(unsigned char *img, int width, int height, int channels, float 
 
 void min_max(unsigned char *img, int width, int height, int channels, int radius);
 
+void local_contrast(unsigned char *img, int width, int height, int channels, int radius, float factor);
+
+void adaptive_threshold(unsigned char *img, int width, int height, int channels, int radius, float threshold);
+
+void sharpen(unsigned char *img, int width, int height, int channels);
+
 int main() {
     int width, height, channels;
     unsigned char *img = stbi_load("joconde.jpg", &width, &height, &channels, 3);
@@ -43,7 +49,7 @@ int main() {
         printf("img null");
     }
     //rotate_image(img, width, height, channels, 40.8f);
-    min_max(img, width, height, channels, 5);
+    local_contrast(img, width, height, channels,5,2);
     std::cout << "Excécution fini" << std::endl;
     return 0;
 }
@@ -429,4 +435,125 @@ void min_max(unsigned char *img, int width, int height, int channels, int radius
         }
     }
     stbi_write_jpg("joconde_min_max.jpg", width, height, channels, newImg, 100);
+}
+
+void local_contrast(unsigned char *img, int width, int height, int channels, int radius, float factor) {
+    unsigned char newImg[width*height*channels];
+    unsigned int bytePerPixel = channels;
+    for (int i = 0; i < width; i++) {
+        for (int j = 0; j < height; j++) {
+            int r = 0;
+            int g = 0;
+            int b = 0;
+            int nbVoisin = 0;
+            for (int x = -radius; x < radius+1; x++) {
+                for (int y = -radius; y < radius+1; y++) {
+                    if (x + i >= 0 && x + i < width && y + j >= 0 && y + j < height) {
+                        int newI = x+i;
+                        int newJ = y+j;
+                        unsigned char *pixelOffset1 = img + (newI + width * newJ) * bytePerPixel;
+                        r += pixelOffset1[0];
+                        g += pixelOffset1[1];
+                        b += pixelOffset1[2];
+                        nbVoisin++;
+                    }
+                }
+            }
+            unsigned char *pixelOffset1 = img + (i + width * j) * bytePerPixel;
+            unsigned char *pixelOffset2 = newImg + (i + width * j) * bytePerPixel;
+            pixelOffset2[0] = (unsigned char)(pixelOffset1[0]+(abs(pixelOffset1[0] - (r/nbVoisin)) * factor));
+            pixelOffset2[1] = (unsigned char)(pixelOffset1[1]+(abs(pixelOffset1[1] - (g/nbVoisin)) * factor));
+            pixelOffset2[2] = (unsigned char)(pixelOffset1[2]+(abs(pixelOffset1[2] - (b/nbVoisin)) * factor));
+        }
+    }
+    stbi_write_jpg("joconde_local_contrast.jpg", width, height, channels, newImg, 100);
+}
+
+void adaptive_threshold(unsigned char *img, int width, int height, int channels, int radius, float threshold) {
+    unsigned char newImg[width*height*channels];
+    unsigned int bytePerPixel = channels;
+    for (int i = 0; i < width; i++) {
+        for (int j = 0; j < height; j++) {
+            int r = 0;
+            int g = 0;
+            int b = 0;
+            int nbVoisin = 0;
+            for (int x = -radius; x < radius+1; x++) {
+                for (int y = -radius; y < radius+1; y++) {
+                    if (x + i >= 0 && x + i < width && y + j >= 0 && y + j < height) {
+                        int newI = x+i;
+                        int newJ = y+j;
+                        unsigned char *pixelOffset1 = img + (newI + width * newJ) * bytePerPixel;
+                        r += pixelOffset1[0];
+                        g += pixelOffset1[1];
+                        b += pixelOffset1[2];
+                        nbVoisin++;
+                    }
+                }
+            }
+            unsigned char *pixelOffset1 = img + (i + width * j) * bytePerPixel;
+            unsigned char *pixelOffset2 = newImg + (i + width * j) * bytePerPixel;
+            if(pixelOffset1[0] > (r/nbVoisin)+threshold && pixelOffset1[1] > (g/nbVoisin)+threshold && pixelOffset1[2] > (b/nbVoisin)+threshold) {
+                pixelOffset2[0] = 255;
+                pixelOffset2[1] = 255;
+                pixelOffset2[2] = 255;
+            }
+            else {
+                pixelOffset2[0] = 0;
+                pixelOffset2[1] = 0;
+                pixelOffset2[2] = 0;
+            }
+        }
+    }
+    stbi_write_jpg("joconde_adaptive_threshold.jpg", width, height, channels, newImg, 100);
+}
+
+void sharpen(unsigned char *img, int width, int height, int channels) {
+    unsigned char newImg[width*height*channels];
+    unsigned int bytePerPixel = channels;
+    for (int i = 0; i < width; i++) {
+        for (int j = 0; j < height; j++) {
+            unsigned char *pixelOffset1 = img + (i + width * j) * bytePerPixel;
+            int r = 5*pixelOffset1[0];
+            int g = 5*pixelOffset1[1];
+            int b = 5*pixelOffset1[2];
+            if(i-1 >= 0) {
+                pixelOffset1 = img + (i-1 + width * j) * bytePerPixel;
+                r -= pixelOffset1[0];
+                g -= pixelOffset1[1];
+                b -= pixelOffset1[2];
+            }
+            if(i+1 < width) {
+                pixelOffset1 = img + (i+1 + width * j) * bytePerPixel;
+                r -= pixelOffset1[0];
+                g -= pixelOffset1[1];
+                b -= pixelOffset1[2];
+            }
+            if(j-1 >= 0) {
+                pixelOffset1 = img + (i + width * (j-1)) * bytePerPixel;
+                r -= pixelOffset1[0];
+                g -= pixelOffset1[1];
+                b -= pixelOffset1[2];
+            }
+            if(j+1 < height) {
+                pixelOffset1 = img + (i + width * (j+1)) * bytePerPixel;
+                r -= pixelOffset1[0];
+                g -= pixelOffset1[1];
+                b -= pixelOffset1[2];
+            }
+
+            if(r>255)
+                r=255;
+            if(b>255)
+                b=255;
+            if(g>255)
+                g=255;
+
+            unsigned char *pixelOffset2 = newImg + (i + width * j) * bytePerPixel;
+            pixelOffset2[0] = r<0 ? 0 : r;
+            pixelOffset2[1] = g<0 ? 0 : g;
+            pixelOffset2[2] = b<0 ? 0 : b;
+        }
+    }
+    stbi_write_jpg("joconde_sharpen.jpg", width, height, channels, newImg, 100);
 }
