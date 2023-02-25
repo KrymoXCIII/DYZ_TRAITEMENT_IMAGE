@@ -65,9 +65,9 @@ int main() {
     }
     //rotate_image(img, width, height, channels, 40.8f);
     //local_contrast(img, width, height, channels,5,2);
-    ///
-    lines_tracing(img,width,height,channels,20,40);
-    ///
+
+    normalize_images(images,100,100,100,40);
+
     std::cout << "Excécution fini" << std::endl;
     return 0;
 }
@@ -88,11 +88,11 @@ void normalize_images(std::vector<unsigned char*> image_files, int top, int left
 
         stbi_image_free(image_file);
 
-        stbi_write_jpg("normalize_image", width, height, channels, image_file, 100);
+        stbi_write_jpg("normalize_image.jpg", width, height, channels, image_file, 100);
     }
 }
 
-/// 
+
 void lines_tracing(unsigned char *img, int width, int height, int channels, int lx, int ly)
 {
     unsigned int bytePerPixel = channels;
@@ -117,10 +117,10 @@ void lines_tracing(unsigned char *img, int width, int height, int channels, int 
         }
     }
 
-    stbi_write_jpg("joconde_crossed.jpg", width, height, channels, newImg, 100);
+    stbi_write_jpg("trace_line.jpg", width, height, channels, newImg, 100);
     
 }
-///
+
 
 
 void translate_image(unsigned char *img, int width, int height, int channels, int dx, int dy) {
@@ -147,7 +147,7 @@ void translate_image(unsigned char *img, int width, int height, int channels, in
     delete[] newImg;
 }
  
- */
+
 
 void rotate_image(unsigned char *img, int width, int height, int channels, float angle_degrees) {
     const float PI = 3.14159265358979323846;
@@ -226,29 +226,7 @@ void resize_image(unsigned char *img, int width, int height, int channels, int n
     delete[] resized_img;
 }
 
-void translate_image(unsigned char *img, int width, int height, int channels, int dx, int dy) {
-    unsigned int bytePerPixel = channels;
-    unsigned char *newImg = new unsigned char[width * height * bytePerPixel];
 
-    for (int j = 0; j < height; j++) {
-        for (int i = 0; i < width; i++) {
-            for (int k = 0; k < bytePerPixel; k++) {
-                int new_i = (i + dx) % width;
-                int new_j = (j + dy) % height;
-
-                unsigned char *srcPixel = img + (i + j * width) * bytePerPixel;
-                unsigned char *dstPixel = newImg + (new_i + new_j * width) * bytePerPixel;
-
-                *dstPixel++ = *srcPixel++;
-                *dstPixel++ = *srcPixel++;
-                *dstPixel++ = *srcPixel++;
-            }
-        }
-    }
-
-    stbi_write_jpg("translated_image.jpg", width, height, channels, newImg, 100);
-    delete[] newImg;
-}
 
 void crop_image(unsigned char *img, int width, int height, int channels, int top, int left, int bottom, int right) {
     unsigned int bytePerPixel = channels;
