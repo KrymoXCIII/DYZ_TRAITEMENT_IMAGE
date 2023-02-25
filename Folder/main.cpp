@@ -7,85 +7,187 @@
 #include "stb_image_resize.h"
 #include <vector>
 #include <algorithm>
+#include <fstream>
+#include <sstream>
+
+void lines_tracing(unsigned char *img, int width, int height, int channels, int lx, int ly, std::string filename);
 
 
-void lines_tracing(unsigned char *img, int width, int height, int channels, int lx, int ly);
-
-
-void invert_image_colors(unsigned char *img, int width, int height, int channels);
+void invert_image_colors(unsigned char *img, int width, int height, int channels, std::string filename);
 
 // S4
-void flip_horizontal(unsigned char *img, int width, int height, int channels);
+void flip_horizontal(unsigned char *img, int width, int height, int channels, std::string filename);
 
-void flip_vertical(unsigned char *img, int width, int height, int channels);
+void flip_vertical(unsigned char *img, int width, int height, int channels, std::string filename);
 
-void rotate_90(unsigned char *img, int width, int height, int channels);
+void rotate_90(unsigned char *img, int width, int height, int channels, std::string filename);
 
-void crop_image(unsigned char *img, int width, int height, int channels, int top, int left, int bottom, int right);
+void crop_image(unsigned char *img, int width, int height, int channels, int top, int left, int bottom, int right, std::string filename);
 
-void translate_image(unsigned char *img, int width, int height, int channels, int dx, int dy);
+void translate_image(unsigned char *img, int width, int height, int channels, int dx, int dy, std::string filename);
 
-void resize_image(unsigned char *img, int width, int height, int channels, int new_width, int new_height);
+void resize_image(unsigned char *img, int width, int height, int channels, int new_width, int new_height, std::string filename);
 
-void transvection_image(unsigned char *img, int width, int height, int channels, int dx, int dy);
+void transvection_image(unsigned char *img, int width, int height, int channels, int dx, int dy, std::string filename);
 
-void rotate_image(unsigned char *img, int width, int height, int channels, float angle_degrees);
+void rotate_image(unsigned char *img, int width, int height, int channels, float angle_degrees, std::string filename);
 //
 
 // S5
-void blur(unsigned char *img, int width, int height, int channels, float radius);
+void blur(unsigned char *img, int width, int height, int channels, float radius, std::string filename);
 
-void erode(unsigned char *img, int width, int height, int channels, float radius);
+void erode(unsigned char *img, int width, int height, int channels, float radius, std::string filename);
 
-void dilate(unsigned char *img, int width, int height, int channels, float radius);
+void dilate(unsigned char *img, int width, int height, int channels, float radius, std::string filename);
 
-void median_blur(unsigned char *img, int width, int height, int channels, float radius);
+void median_blur(unsigned char *img, int width, int height, int channels, float radius, std::string filename);
 
-void min_max(unsigned char *img, int width, int height, int channels, int radius);
+void min_max(unsigned char *img, int width, int height, int channels, int radius, std::string filename);
 
-void local_contrast(unsigned char *img, int width, int height, int channels, int radius, float factor);
+void local_contrast(unsigned char *img, int width, int height, int channels, int radius, float factor, std::string filename);
 
-void adaptive_threshold(unsigned char *img, int width, int height, int channels, int radius, float threshold);
+void adaptive_threshold(unsigned char *img, int width, int height, int channels, int radius, float threshold, std::string filename);
 
-void sharpen(unsigned char *img, int width, int height, int channels);
+void sharpen(unsigned char *img, int width, int height, int channels, std::string filename);
 //
 
-void normalize_images(std::vector<unsigned char*> ListImages, int top, int left, int bottom, int right);
+void normalize_images(std::vector<unsigned char*> ListImages, int top, int left, int bottom, int right, std::string filename);
 
 int main() {
+    std::ifstream infile("process.txt");
+    if (!infile.is_open()) {
+        std::cerr << "Impossible d'ouvrir le fichier process.txt" << std::endl;
+        return 1;
+    }
+    std::string line;
     int width, height, channels;
-    unsigned char *img = stbi_load("joconde.jpg", &width, &height, &channels, 3);
-    /*unsigned char *img2 = stbi_load("001.jpg", &width, &height, &channels, 3);
-    std::vector<unsigned char*> images;
-    images.push_back(img);
-    images.push_back(img2);*/
-
+    unsigned char *img;
     if(img == nullptr) {
         printf("img null");
     }
-    //lines_tracing(img,width,height,channels,20,40);
-    //invert_image_colors(img, width, height, channels);
-    //flip_horizontal(img, width, height, channels);
-    //flip_vertical(img, width, height, channels);
-    //rotate_90(img, width, height, channels);
-    //crop_image(img, width, height, channels,100,100,100,100);
-    //translate_image(img, width, height, channels,100,100);
-    // resize_image(img, width, height, channels,300,300);
-    // transvection_image(img, width, height, channels,100,100);
-    //rotate_image(img, width, height, channels, 40.8f);
-    //blur(img, width, height, channels, 40.8f);
-    //erode(img, width, height, channels, 105.5f);
-    //dilate(img, width, height, channels, 105.5f);
-    //median_blur(img, width, height, channels, 105.5f);
-    //min_max(img, width, height, channels, 105.5f);
-    //local_contrast(img, width, height, channels,5,2);
-    //adaptive_threshold(img, width, height, channels, 5,2);
-    //sharpen(img, width, height, channels);
+    while (std::getline(infile, line)) {
+        std::string operation, filename, wordkey, temp1, temp2, temp3,temp4,temp5,temp6;
+        std::stringstream ss(line);
+        ss >> operation >> filename >> wordkey >> temp1 >> temp2 >> temp3>>temp4>>temp5>>temp6;
+
+        if (operation == "load") {
+            img = stbi_load(filename.c_str(), &width, &height, &channels, 3);
+            if(img == nullptr) {
+                std::cerr << "Impossible de charger l'image " << filename << std::endl;
+                return 1;
+            }
+            stbi_write_jpg(temp1.c_str(), width, height, channels, img, 100);
+
+
+        }
+        else if (operation == "save") {
+            unsigned char *tempImg = stbi_load(filename.c_str(), &width, &height, &channels, 3);
+            stbi_write_jpg(temp1.c_str(), width, height, channels, tempImg, 100);
+        }
+        else if (operation == "lines_tracing") {
+            unsigned char *tempImg = stbi_load(filename.c_str(), &width, &height, &channels, 3);
+            int tempdata = std::stoi(temp1);
+            int tempdata2 = std::stoi(temp2);
+            lines_tracing(tempImg, width, height, channels,tempdata,tempdata2,temp4);
+        }
+        else if (operation == "invert_image_colors") {
+            unsigned char *tempImg = stbi_load(filename.c_str(), &width, &height, &channels, 3);
+            invert_image_colors(tempImg, width, height, channels,temp1);
+        }
+        else if (operation == "flip_horizontal") {
+            unsigned char *tempImg = stbi_load(filename.c_str(), &width, &height, &channels, 3);
+            flip_horizontal(tempImg, width, height, channels,temp1);
+        }
+        else if (operation == "flip_vertical") {
+            unsigned char *tempImg = stbi_load(filename.c_str(), &width, &height, &channels, 3);
+            flip_vertical(tempImg, width, height, channels,temp1);
+        }
+        else if (operation == "rotate_90") {
+            unsigned char *tempImg = stbi_load(filename.c_str(), &width, &height, &channels, 3);
+            rotate_90(tempImg, width, height, channels,temp1);
+        }
+        else if (operation == "crop_image") {
+            unsigned char *tempImg = stbi_load(filename.c_str(), &width, &height, &channels, 3);
+            int tempdata = std::stoi(temp1);
+            int tempdata2 = std::stoi(temp2);
+            int tempdata3 = std::stoi(temp3);
+            int tempdata4 = std::stoi(temp4);
+            crop_image(tempImg, width, height, channels,tempdata,tempdata2,tempdata3,tempdata4,temp6);
+        }
+        else if (operation == "translate_image") {
+            unsigned char *tempImg = stbi_load(filename.c_str(), &width, &height, &channels, 3);
+            int tempdata = std::stoi(temp1);
+            int tempdata2 = std::stoi(temp2);
+            translate_image(tempImg, width, height, channels,tempdata,tempdata2,temp4);
+        }
+        else if (operation == "resize_image") {
+            unsigned char *tempImg = stbi_load(filename.c_str(), &width, &height, &channels, 3);
+            int tempdata = std::stoi(temp1);
+            int tempdata2 = std::stoi(temp2);
+            resize_image(tempImg, width, height, channels,tempdata,tempdata2,temp4);
+        }
+        else if (operation == "transvection_image") {
+            unsigned char *tempImg = stbi_load(filename.c_str(), &width, &height, &channels, 3);
+            int tempdata = std::stoi(temp1);
+            int tempdata2 = std::stoi(temp2);
+            transvection_image(tempImg, width, height, channels,tempdata,tempdata2,temp4);
+        }
+        else if (operation == "rotate_image") {
+            unsigned char *tempImg = stbi_load(filename.c_str(), &width, &height, &channels, 3);
+            int tempdata = std::stoi(temp1);
+            rotate_image(tempImg, width, height, channels,tempdata,temp3);
+        }
+        else if (operation == "blur") {
+            unsigned char *tempImg = stbi_load(filename.c_str(), &width, &height, &channels, 3);
+            int tempdata = std::stoi(temp1);
+            blur(tempImg, width, height, channels,tempdata,temp3);
+        }
+        else if (operation == "erode") {
+            unsigned char *tempImg = stbi_load(filename.c_str(), &width, &height, &channels, 3);
+            int tempdata = std::stoi(temp1);
+            erode(tempImg, width, height, channels,tempdata,temp3);
+        }
+        else if (operation == "dilate") {
+            unsigned char *tempImg = stbi_load(filename.c_str(), &width, &height, &channels, 3);
+            int tempdata = std::stoi(temp1);
+            dilate(tempImg, width, height, channels,tempdata,temp3);
+        }
+        else if (operation == "median_blur") {
+            unsigned char *tempImg = stbi_load(filename.c_str(), &width, &height, &channels, 3);
+            int tempdata = std::stoi(temp1);
+            median_blur(tempImg, width, height, channels,tempdata,temp3);
+        }
+        else if (operation == "min_max") {
+            unsigned char *tempImg = stbi_load(filename.c_str(), &width, &height, &channels, 3);
+            int tempdata = std::stoi(temp1);
+            min_max(tempImg, width, height, channels,tempdata,temp3);
+        }
+        else if (operation == "local_contrast") {
+            unsigned char *tempImg = stbi_load(filename.c_str(), &width, &height, &channels, 3);
+            int tempdata = std::stoi(temp1);
+            int tempdata2 = std::stoi(temp2);
+            local_contrast(tempImg, width, height, channels,tempdata,tempdata2,temp4);
+        }
+        else if (operation == "adaptive_threshold") {
+            unsigned char *tempImg = stbi_load(filename.c_str(), &width, &height, &channels, 3);
+            int tempdata = std::stoi(temp1);
+            int tempdata2 = std::stoi(temp2);
+            adaptive_threshold(tempImg, width, height, channels,tempdata,tempdata,temp4);
+        }
+        else if (operation == "sharpen") {
+            unsigned char *tempImg = stbi_load(filename.c_str(), &width, &height, &channels, 3);
+            sharpen(tempImg, width, height, channels,temp1);
+        }
+        else if (operation == "normalize_images") {
+           // normalize_images(img, width, height, channels,temp1);
+        }
+    }
+
     std::cout << "Excécution fini" << std::endl;
     return 0;
 }
 
-void normalize_images(std::vector<unsigned char*> image_files, int top, int left, int bottom, int right) {
+void normalize_images(std::vector<unsigned char*> image_files, int top, int left, int bottom, int right,std::string filename) {
     // Parcourir chaque fichier d'image dans la liste
     for (unsigned char* image_file : image_files) {
         int width, height, channels;
@@ -96,17 +198,16 @@ void normalize_images(std::vector<unsigned char*> image_files, int top, int left
         }
 
 
-        crop_image(image_file, width, height, channels, top, left, bottom, right);
+        crop_image(image_file, width, height, channels, top, left, bottom, right,filename);
 
 
         stbi_image_free(image_file);
 
-        stbi_write_jpg("normalize_image.jpg", width, height, channels, image_file, 100);
     }
 }
 
 
-void lines_tracing(unsigned char *img, int width, int height, int channels, int lx, int ly)
+void lines_tracing(unsigned char *img, int width, int height, int channels, int lx, int ly,std::string filename)
 {
     unsigned int bytePerPixel = channels;
     unsigned char *newImg = new unsigned char[width * height * bytePerPixel];
@@ -129,14 +230,13 @@ void lines_tracing(unsigned char *img, int width, int height, int channels, int 
             }
         }
     }
-
-    stbi_write_jpg("trace_line.jpg", width, height, channels, newImg, 100);
-    
+    img = newImg;
+    stbi_write_jpg(filename.c_str(), width, height, channels, img, 100);
 }
 
 
 
-void translate_image(unsigned char *img, int width, int height, int channels, int dx, int dy) {
+void translate_image(unsigned char *img, int width, int height, int channels, int dx, int dy,std::string filename) {
     unsigned int bytePerPixel = channels;
     unsigned char *newImg = new unsigned char[width * height * bytePerPixel];
 
@@ -155,14 +255,14 @@ void translate_image(unsigned char *img, int width, int height, int channels, in
             }
         }
     }
-
-    stbi_write_jpg("translated_image.jpg", width, height, channels, newImg, 100);
+    img = newImg;
+    stbi_write_jpg(filename.c_str(), width, height, channels, img, 100);
     delete[] newImg;
 }
  
 
 
-void rotate_image(unsigned char *img, int width, int height, int channels, float angle_degrees) {
+void rotate_image(unsigned char *img, int width, int height, int channels, float angle_degrees,std::string filename) {
     const float PI = 3.14159265358979323846;
     float angle_radians = angle_degrees * PI / 180.0;
 
@@ -198,13 +298,13 @@ void rotate_image(unsigned char *img, int width, int height, int channels, float
             }
         }
     }
-
-    stbi_write_jpg("rotated_image.jpg", width, height, channels, newImg, 100);
+    img = newImg;
+    stbi_write_jpg(filename.c_str(), width, height, channels, img, 100);
     delete[] newImg;
 
 }
 
-void transvection_image(unsigned char *img, int width, int height, int channels, int dx, int dy) {
+void transvection_image(unsigned char *img, int width, int height, int channels, int dx, int dy,std::string filename) {
     unsigned int bytePerPixel = channels;
     unsigned char *newImg = new unsigned char[width * height * bytePerPixel];
 
@@ -224,24 +324,26 @@ void transvection_image(unsigned char *img, int width, int height, int channels,
             }
         }
     }
-
-    stbi_write_jpg("transvection_image.jpg", width, height, channels, newImg, 100);
+    img = newImg;
+    stbi_write_jpg(filename.c_str(), width, height, channels, img, 100);
     delete[] newImg;
 }
 
-void resize_image(unsigned char *img, int width, int height, int channels, int new_width, int new_height) {
+void resize_image(unsigned char *img, int width, int height, int channels, int new_width, int new_height,std::string filename) {
     unsigned char *resized_img = new unsigned char[new_width * new_height * channels];
 
     stbir_resize_uint8(img, width, height, 0, resized_img, new_width, new_height, 0, channels);
 
     stbi_write_jpg("resized_image.jpg", new_width, new_height, channels, resized_img, 100);
 
+    img = resized_img;
+    stbi_write_jpg(filename.c_str(), width, height, channels, img, 100);
     delete[] resized_img;
 }
 
 
 
-void crop_image(unsigned char *img, int width, int height, int channels, int top, int left, int bottom, int right) {
+void crop_image(unsigned char *img, int width, int height, int channels, int top, int left, int bottom, int right,std::string filename) {
     unsigned int bytePerPixel = channels;
     unsigned int cropped_width = right - left;
     unsigned int cropped_height = bottom - top;
@@ -259,11 +361,11 @@ void crop_image(unsigned char *img, int width, int height, int channels, int top
             }
         }
     }
-    stbi_write_jpg("joconde_crop.jpg", cropped_width, cropped_height, channels, cropped_img, 100);
-
+    img = cropped_img;
+    stbi_write_jpg(filename.c_str(), width, height, channels, img, 100);
     delete[] cropped_img;
 }
-void rotate_90(unsigned char *img, int width, int height, int channels) {
+void rotate_90(unsigned char *img, int width, int height, int channels,std::string filename) {
     unsigned int bytePerPixel = channels;
     unsigned char *newImg = new unsigned char[width * height * bytePerPixel];
 
@@ -277,13 +379,11 @@ void rotate_90(unsigned char *img, int width, int height, int channels) {
         }
     }
     std::swap(width, height); // Inverser les dimensions de l'image
-    delete[] img;
     img = newImg;
-    stbi_write_jpg("rotated_90.jpg", width, height, channels, img, 100);
-    delete[] newImg;
+    stbi_write_jpg(filename.c_str(), width, height, channels, img, 100);
 }
 
-void flip_vertical(unsigned char *img, int width, int height, int channels) {
+void flip_vertical(unsigned char *img, int width, int height, int channels,std::string filename) {
     unsigned int bytePerPixel = channels;
     unsigned char *line = new unsigned char[width * bytePerPixel];
 
@@ -297,11 +397,12 @@ void flip_vertical(unsigned char *img, int width, int height, int channels) {
             }
         }
     }
+    img = line;
+    stbi_write_jpg(filename.c_str(), width, height, channels, img, 100);
     delete[] line;
-    stbi_write_jpg("joconde_flip_vertical.jpg", width, height, channels, img, 100);
 }
 
-void flip_horizontal(unsigned char *img, int width, int height, int channels) {
+void flip_horizontal(unsigned char *img, int width, int height, int channels,std::string filename) {
     unsigned int bytePerPixel = channels;
     unsigned char *line = new unsigned char[width * bytePerPixel];
 
@@ -315,11 +416,12 @@ void flip_horizontal(unsigned char *img, int width, int height, int channels) {
             }
         }
     }
+    img = line;
+    stbi_write_jpg(filename.c_str(), width, height, channels, img, 100);
     delete[] line;
-    stbi_write_jpg("joconde_flip.jpg", width, height, channels, img, 100);
 }
 
-void invert_image_colors(unsigned char *img, int width, int height, int channels) {
+void invert_image_colors(unsigned char *img, int width, int height, int channels,std::string filename) {
     unsigned int bytePerPixel = channels;
     for (int i = 0; i < width; i++) {
         for (int j = 0; j < height; j++) {
@@ -334,10 +436,10 @@ void invert_image_colors(unsigned char *img, int width, int height, int channels
             pixelOffset2[2] = 255 - b;
         }
     }
-    stbi_write_jpg("joconde_insert_image_color.jpg", width, height, channels, img, 100);
+    stbi_write_jpg(filename.c_str(), width, height, channels, img, 100);
 }
 
-void blur(unsigned char *img, int width, int height, int channels, float radius) {
+void blur(unsigned char *img, int width, int height, int channels, float radius,std::string filename) {
     unsigned char newImg[width*height*channels];
     unsigned int bytePerPixel = channels;
     for (int i = 0; i < width; i++) {
@@ -365,10 +467,11 @@ void blur(unsigned char *img, int width, int height, int channels, float radius)
             pixelOffset2[2] = (unsigned char)(b/nbVoisin);
         }
     }
-    stbi_write_jpg("joconde_blur.jpg", width, height, channels, newImg, 100);
+    img = newImg;
+    stbi_write_jpg(filename.c_str(), width, height, channels, img, 100);
 }
 
-void erode(unsigned char *img, int width, int height, int channels, float radius) {
+void erode(unsigned char *img, int width, int height, int channels, float radius,std::string filename) {
     unsigned char newImg[width*height*channels];
     unsigned int bytePerPixel = channels;
     for (int i = 0; i < width; i++) {
@@ -396,10 +499,11 @@ void erode(unsigned char *img, int width, int height, int channels, float radius
             pixelOffset2[2] = (b);
         }
     }
-    stbi_write_jpg("joconde_erode.jpg", width, height, channels, newImg, 100);
+    img = newImg;
+    stbi_write_jpg(filename.c_str(), width, height, channels, img, 100);
 }
 
-void dilate(unsigned char *img, int width, int height, int channels, float radius) {
+void dilate(unsigned char *img, int width, int height, int channels, float radius,std::string filename) {
     unsigned char newImg[width*height*channels];
     unsigned int bytePerPixel = channels;
     for (int i = 0; i < width; i++) {
@@ -427,10 +531,11 @@ void dilate(unsigned char *img, int width, int height, int channels, float radiu
             pixelOffset2[2] = (b);
         }
     }
-    stbi_write_jpg("joconde_dilate.jpg", width, height, channels, newImg, 100);
+    img = newImg;
+    stbi_write_jpg(filename.c_str(), width, height, channels, img, 100);
 }
 
-void median_blur(unsigned char *img, int width, int height, int channels, float radius) {
+void median_blur(unsigned char *img, int width, int height, int channels, float radius,std::string filename) {
     unsigned char newImg[width*height*channels];
     unsigned int bytePerPixel = channels;
     for (int i = 0; i < width; i++) {
@@ -466,10 +571,11 @@ void median_blur(unsigned char *img, int width, int height, int channels, float 
             }
         }
     }
-    stbi_write_jpg("joconde_median_blur.jpg", width, height, channels, newImg, 100);
+    img = newImg;
+    stbi_write_jpg(filename.c_str(), width, height, channels, img, 100);
 }
 
-void min_max(unsigned char *img, int width, int height, int channels, int radius) {
+void min_max(unsigned char *img, int width, int height, int channels, int radius,std::string filename) {
     unsigned char newImg[width*height*channels];
     unsigned int bytePerPixel = channels;
     for (int i = 0; i < width; i++) {
@@ -520,10 +626,11 @@ void min_max(unsigned char *img, int width, int height, int channels, int radius
             }
         }
     }
-    stbi_write_jpg("joconde_min_max.jpg", width, height, channels, newImg, 100);
+    img = newImg;
+    stbi_write_jpg(filename.c_str(), width, height, channels, img, 100);
 }
 
-void local_contrast(unsigned char *img, int width, int height, int channels, int radius, float factor) {
+void local_contrast(unsigned char *img, int width, int height, int channels, int radius, float factor,std::string filename) {
     unsigned char newImg[width*height*channels];
     unsigned int bytePerPixel = channels;
     for (int i = 0; i < width; i++) {
@@ -552,10 +659,11 @@ void local_contrast(unsigned char *img, int width, int height, int channels, int
             pixelOffset2[2] = (unsigned char)(pixelOffset1[2]+(abs(pixelOffset1[2] - (b/nbVoisin)) * factor));
         }
     }
-    stbi_write_jpg("joconde_local_contrast.jpg", width, height, channels, newImg, 100);
+    img = newImg;
+    stbi_write_jpg(filename.c_str(), width, height, channels, img, 100);
 }
 
-void adaptive_threshold(unsigned char *img, int width, int height, int channels, int radius, float threshold) {
+void adaptive_threshold(unsigned char *img, int width, int height, int channels, int radius, float threshold,std::string filename) {
     unsigned char newImg[width*height*channels];
     unsigned int bytePerPixel = channels;
     for (int i = 0; i < width; i++) {
@@ -591,10 +699,11 @@ void adaptive_threshold(unsigned char *img, int width, int height, int channels,
             }
         }
     }
-    stbi_write_jpg("joconde_adaptive_threshold.jpg", width, height, channels, newImg, 100);
+    img = newImg;
+    stbi_write_jpg(filename.c_str(), width, height, channels, img, 100);
 }
 
-void sharpen(unsigned char *img, int width, int height, int channels) {
+void sharpen(unsigned char *img, int width, int height, int channels,std::string filename) {
     unsigned char newImg[width*height*channels];
     unsigned int bytePerPixel = channels;
     for (int i = 0; i < width; i++) {
@@ -641,5 +750,7 @@ void sharpen(unsigned char *img, int width, int height, int channels) {
             pixelOffset2[2] = b<0 ? 0 : b;
         }
     }
-    stbi_write_jpg("joconde_sharpen.jpg", width, height, channels, newImg, 100);
+    img = newImg;
+    stbi_write_jpg(filename.c_str(), width, height, channels, img, 100);
+
 }
