@@ -8,9 +8,9 @@
 #include <vector>
 #include <algorithm>
 
-/// WIP
+
 void lines_tracing(unsigned char *img, int width, int height, int channels, int lx, int ly);
-///
+
 
 void invert_image_colors(unsigned char *img, int width, int height, int channels);
 
@@ -55,19 +55,32 @@ void normalize_images(std::vector<unsigned char*> ListImages, int top, int left,
 int main() {
     int width, height, channels;
     unsigned char *img = stbi_load("joconde.jpg", &width, &height, &channels, 3);
-    unsigned char *img2 = stbi_load("001.jpg", &width, &height, &channels, 3);
+    /*unsigned char *img2 = stbi_load("001.jpg", &width, &height, &channels, 3);
     std::vector<unsigned char*> images;
     images.push_back(img);
-    images.push_back(img2);
+    images.push_back(img2);*/
 
     if(img == nullptr) {
         printf("img null");
     }
+    //lines_tracing(img,width,height,channels,20,40);
+    //invert_image_colors(img, width, height, channels);
+    //flip_horizontal(img, width, height, channels);
+    //flip_vertical(img, width, height, channels);
+    //rotate_90(img, width, height, channels);
+    //crop_image(img, width, height, channels,100,100,100,100);
+    //translate_image(img, width, height, channels,100,100);
+    // resize_image(img, width, height, channels,300,300);
+    // transvection_image(img, width, height, channels,100,100);
     //rotate_image(img, width, height, channels, 40.8f);
+    //blur(img, width, height, channels, 40.8f);
+    //erode(img, width, height, channels, 105.5f);
+    //dilate(img, width, height, channels, 105.5f);
+    //median_blur(img, width, height, channels, 105.5f);
+    //min_max(img, width, height, channels, 105.5f);
     //local_contrast(img, width, height, channels,5,2);
-
-    normalize_images(images,100,100,100,40);
-
+    //adaptive_threshold(img, width, height, channels, 5,2);
+    //sharpen(img, width, height, channels);
     std::cout << "Excécution fini" << std::endl;
     return 0;
 }
