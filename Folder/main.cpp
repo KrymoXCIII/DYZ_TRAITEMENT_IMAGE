@@ -65,7 +65,7 @@ int main() {
     return 0;
 }
 
-/// WIP
+/// 
 void lines_tracing(unsigned char *img, int width, int height, int channels, int lx, int ly)
 {
     unsigned int bytePerPixel = channels;
@@ -94,43 +94,6 @@ void lines_tracing(unsigned char *img, int width, int height, int channels, int 
     
 }
 ///
-
-/*
-
-            void erode(unsigned char *img, int width, int height, int channels, float radius) {
-                unsigned char newImg[width*height*channels];
-                unsigned int bytePerPixel = channels;
-                for (int i = 0; i < width; i++) {
-                    for (int j = 0; j < height; j++) {
-                        unsigned char r = 255;
-                        unsigned char g = 255;
-                        unsigned char b = 255;
-                        for (int x = -radius; x < radius+1; x++) {
-                            for (int y = -radius; y < radius+1; y++) {
-                                if (x + i >= 0 && x + i < width && y + j >= 0 && y + j < height) {
-                                    int newI = x+i;
-                                    int newJ = y+j;
-                                    unsigned char *pixelOffset1 = img + (newI + width * newJ) * bytePerPixel;
-                                    if(pixelOffset1[0] < r && pixelOffset1[1] < g && pixelOffset1[2] < b) {
-                                        r = pixelOffset1[0];
-                                        g = pixelOffset1[1];
-                                        b = pixelOffset1[2];
-                                    }
-                                }
-                            }
-                        }
-                        unsigned char *pixelOffset2 = newImg + (i + width * j) * bytePerPixel;
-                        pixelOffset2[0] = (r);
-                        pixelOffset2[1] = (g);
-                        pixelOffset2[2] = (b);
-                    }
-                }
-                stbi_write_jpg("joconde_erode.jpg", width, height, channels, newImg, 100);
-            }
-            
-
-//////
-
 
 
 void translate_image(unsigned char *img, int width, int height, int channels, int dx, int dy) {
