@@ -8,8 +8,13 @@
 #include <vector>
 #include <algorithm>
 
+/// WIP
+void lines_tracing(unsigned char *img, int width, int height, int channels, int lx, int ly);
+///
+
 void invert_image_colors(unsigned char *img, int width, int height, int channels);
 
+// S4
 void flip_horizontal(unsigned char *img, int width, int height, int channels);
 
 void flip_vertical(unsigned char *img, int width, int height, int channels);
@@ -25,7 +30,9 @@ void resize_image(unsigned char *img, int width, int height, int channels, int n
 void transvection_image(unsigned char *img, int width, int height, int channels, int dx, int dy);
 
 void rotate_image(unsigned char *img, int width, int height, int channels, float angle_degrees);
+//
 
+// S5
 void blur(unsigned char *img, int width, int height, int channels, float radius);
 
 void erode(unsigned char *img, int width, int height, int channels, float radius);
@@ -41,6 +48,7 @@ void local_contrast(unsigned char *img, int width, int height, int channels, int
 void adaptive_threshold(unsigned char *img, int width, int height, int channels, int radius, float threshold);
 
 void sharpen(unsigned char *img, int width, int height, int channels);
+//
 
 int main() {
     int width, height, channels;
@@ -49,10 +57,107 @@ int main() {
         printf("img null");
     }
     //rotate_image(img, width, height, channels, 40.8f);
-    local_contrast(img, width, height, channels,5,2);
+    //local_contrast(img, width, height, channels,5,2);
+    ///
+    lines_tracing(img,width,height,channels,20,40);
+    ///
     std::cout << "Excécution fini" << std::endl;
     return 0;
 }
+
+/// WIP
+void lines_tracing(unsigned char *img, int width, int height, int channels, int lx, int ly)
+{
+    unsigned int bytePerPixel = channels;
+    unsigned char *newImg = new unsigned char[width * height * bytePerPixel];
+
+    for (int i = 0; i < width; i++)
+    {
+        for (int j = 0; j < height; j++)
+        {
+            unsigned char r = 255;
+            unsigned char g = 255;
+            unsigned char b = 255;
+
+            unsigned char *pixel = newImg + (i + width * j) * bytePerPixel;
+
+            if(i == lx || j == ly)
+            {
+                pixel[0] = (r);
+                pixel[1] = (g);
+                pixel[2] = (b);
+            }
+        }
+    }
+
+    stbi_write_jpg("joconde_crossed.jpg", width, height, channels, newImg, 100);
+    
+}
+///
+
+/*
+
+            void erode(unsigned char *img, int width, int height, int channels, float radius) {
+                unsigned char newImg[width*height*channels];
+                unsigned int bytePerPixel = channels;
+                for (int i = 0; i < width; i++) {
+                    for (int j = 0; j < height; j++) {
+                        unsigned char r = 255;
+                        unsigned char g = 255;
+                        unsigned char b = 255;
+                        for (int x = -radius; x < radius+1; x++) {
+                            for (int y = -radius; y < radius+1; y++) {
+                                if (x + i >= 0 && x + i < width && y + j >= 0 && y + j < height) {
+                                    int newI = x+i;
+                                    int newJ = y+j;
+                                    unsigned char *pixelOffset1 = img + (newI + width * newJ) * bytePerPixel;
+                                    if(pixelOffset1[0] < r && pixelOffset1[1] < g && pixelOffset1[2] < b) {
+                                        r = pixelOffset1[0];
+                                        g = pixelOffset1[1];
+                                        b = pixelOffset1[2];
+                                    }
+                                }
+                            }
+                        }
+                        unsigned char *pixelOffset2 = newImg + (i + width * j) * bytePerPixel;
+                        pixelOffset2[0] = (r);
+                        pixelOffset2[1] = (g);
+                        pixelOffset2[2] = (b);
+                    }
+                }
+                stbi_write_jpg("joconde_erode.jpg", width, height, channels, newImg, 100);
+            }
+            
+
+//////
+
+
+
+void translate_image(unsigned char *img, int width, int height, int channels, int dx, int dy) {
+    unsigned int bytePerPixel = channels;
+    unsigned char *newImg = new unsigned char[width * height * bytePerPixel];
+
+    for (int j = 0; j < height; j++) {
+        for (int i = 0; i < width; i++) {
+            for (int k = 0; k < bytePerPixel; k++) {
+                int new_i = (i + dx) % width;
+                int new_j = (j + dy) % height;
+
+                unsigned char *srcPixel = img + (i + j * width) * bytePerPixel;
+                unsigned char *dstPixel = newImg + (new_i + new_j * width) * bytePerPixel;
+
+                *dstPixel++ = *srcPixel++;
+                *dstPixel++ = *srcPixel++;
+                *dstPixel++ = *srcPixel++;
+            }
+        }
+    }
+
+    stbi_write_jpg("translated_image.jpg", width, height, channels, newImg, 100);
+    delete[] newImg;
+}
+ 
+ */
 
 void rotate_image(unsigned char *img, int width, int height, int channels, float angle_degrees) {
     const float PI = 3.14159265358979323846;
