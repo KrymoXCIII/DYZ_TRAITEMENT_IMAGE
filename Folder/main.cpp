@@ -50,9 +50,16 @@ void adaptive_threshold(unsigned char *img, int width, int height, int channels,
 void sharpen(unsigned char *img, int width, int height, int channels);
 //
 
+void normalize_images(std::vector<unsigned char*> ListImages, int top, int left, int bottom, int right);
+
 int main() {
     int width, height, channels;
     unsigned char *img = stbi_load("joconde.jpg", &width, &height, &channels, 3);
+    unsigned char *img2 = stbi_load("001.jpg", &width, &height, &channels, 3);
+    std::vector<unsigned char*> images;
+    images.push_back(img);
+    images.push_back(img2);
+
     if(img == nullptr) {
         printf("img null");
     }
@@ -63,6 +70,26 @@ int main() {
     ///
     std::cout << "Excécution fini" << std::endl;
     return 0;
+}
+
+void normalize_images(std::vector<unsigned char*> image_files, int top, int left, int bottom, int right) {
+    // Parcourir chaque fichier d'image dans la liste
+    for (unsigned char* image_file : image_files) {
+        int width, height, channels;
+        // Charger l'image à partir du fichier
+        if (image_file == nullptr) {
+            std::cout << "Erreur lors du chargement de l'image " << image_file << std::endl;
+            continue;
+        }
+
+
+        crop_image(image_file, width, height, channels, top, left, bottom, right);
+
+
+        stbi_image_free(image_file);
+
+        stbi_write_jpg("normalize_image", width, height, channels, image_file, 100);
+    }
 }
 
 /// 
