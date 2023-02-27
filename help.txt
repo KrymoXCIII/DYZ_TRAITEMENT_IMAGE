@@ -1,0 +1,14 @@
+load joconde.jpg in img1.jpg
+load 001.jpg in img2.jpg
+
+rotate_90 img1.jpg in rotate_90.jpg
+invert_image_colors rotate_90.jpg in invert_image_colors.jpg
+
+resize_image img2.jpg to 1000 1000 in resize_image.jpg
+
+save resize_image.jpg in result.png
+save invert_image_colors.jpg in result2.png
+
+
+
+

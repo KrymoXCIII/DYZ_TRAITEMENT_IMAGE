@@ -8,7 +8,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "C:/Users/user/Desktop/DYZ_TRAITEMENT_IMAGE/Folder/main.cpp" "CMakeFiles/Folder.dir/main.cpp.obj" "gcc" "CMakeFiles/Folder.dir/main.cpp.obj.d"
+  "C:/Users/zheng/OneDrive/Documents/GitHub/DYZ_TRAITEMENT_IMAGE/Folder/main.cpp" "CMakeFiles/Folder.dir/main.cpp.obj" "gcc" "CMakeFiles/Folder.dir/main.cpp.obj.d"
   )
 
 # Targets to which this target links.

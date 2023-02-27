@@ -232,6 +232,7 @@ void lines_tracing(unsigned char *img, int width, int height, int channels, int 
     }
     img = newImg;
     stbi_write_jpg(filename.c_str(), width, height, channels, img, 100);
+    delete[] newImg;
 }
 
 
@@ -334,10 +335,9 @@ void resize_image(unsigned char *img, int width, int height, int channels, int n
 
     stbir_resize_uint8(img, width, height, 0, resized_img, new_width, new_height, 0, channels);
 
-    stbi_write_jpg("resized_image.jpg", new_width, new_height, channels, resized_img, 100);
 
     img = resized_img;
-    stbi_write_jpg(filename.c_str(), width, height, channels, img, 100);
+    stbi_write_jpg(filename.c_str(), new_width, new_height, channels, img, 100);
     delete[] resized_img;
 }
 
@@ -361,7 +361,6 @@ void crop_image(unsigned char *img, int width, int height, int channels, int top
             }
         }
     }
-    img = cropped_img;
     stbi_write_jpg(filename.c_str(), width, height, channels, img, 100);
     delete[] cropped_img;
 }
@@ -381,6 +380,7 @@ void rotate_90(unsigned char *img, int width, int height, int channels,std::stri
     std::swap(width, height); // Inverser les dimensions de l'image
     img = newImg;
     stbi_write_jpg(filename.c_str(), width, height, channels, img, 100);
+    delete[] newImg;
 }
 
 void flip_vertical(unsigned char *img, int width, int height, int channels,std::string filename) {
@@ -397,7 +397,6 @@ void flip_vertical(unsigned char *img, int width, int height, int channels,std::
             }
         }
     }
-    img = line;
     stbi_write_jpg(filename.c_str(), width, height, channels, img, 100);
     delete[] line;
 }
@@ -416,7 +415,7 @@ void flip_horizontal(unsigned char *img, int width, int height, int channels,std
             }
         }
     }
-    img = line;
+
     stbi_write_jpg(filename.c_str(), width, height, channels, img, 100);
     delete[] line;
 }
@@ -437,6 +436,7 @@ void invert_image_colors(unsigned char *img, int width, int height, int channels
         }
     }
     stbi_write_jpg(filename.c_str(), width, height, channels, img, 100);
+
 }
 
 void blur(unsigned char *img, int width, int height, int channels, float radius,std::string filename) {

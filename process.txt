@@ -1,4 +1,18 @@
-load joconde.jpg in img1.jpg
-rotate_90 img1.jpg in rotate_90.jpg
-invert_image_colors rotate_90.jpg in invert_image_colors.jpg
-save invert_image_colors.jpg in result.png
+lines_tracing joconde.jpg to 10 10 in lines_tracing.jpg
+invert_image_colors joconde.jpg in invert_image_colors.jpg
+flip_horizontal joconde.jpg in flip_horizontal.jpg
+flip_vertical joconde.jpg in flip_vertical.jpg
+crop_image joconde.jpg to 0 0 100 100 in crop_image.jpg
+rotate_90 joconde.jpg in rotate_90.jpg
+translate_image joconde.jpg to 40 100 in translate_image.jpg
+resize_image joconde.jpg to 500 500 in resize_image.jpg
+transvection_image joconde.jpg to 50 50 in transvection_image.jpg
+rotate_image joconde.jpg to 48.5 in rotate_image.jpg
+blur joconde.jpg to 5 in blur.jpg
+erode joconde.jpg to 5 in erode.jpg
+dilate joconde.jpg to 5 in dilate.jpg
+sharpen joconde.jpg in sharpen.jpg
+median_blur joconde.jpg to 5 in median_blur.jpg
+min_max joconde.jpg to 5 in min_max.jpg
+local_contrast joconde.jpg to 5 in local_contrast.jpg
+adaptive_threshold joconde.jpg to 5 2 in adaptive_threshold.jpg
